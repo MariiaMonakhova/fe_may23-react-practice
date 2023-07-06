@@ -25,7 +25,7 @@ const products = productsFromServer.map((product) => {
   };
 });
 
-const getFilteredProducts = (currProducts, query) => {
+const getFilteredProducts = (currProducts, query, name) => {
   let preparedProducts = [...currProducts];
 
   if (query) {
@@ -36,12 +36,19 @@ const getFilteredProducts = (currProducts, query) => {
     );
   }
 
+  if (name) {
+    preparedProducts = preparedProducts.filter(
+      product => product.owner.name === name,
+    );
+  }
+
   return preparedProducts;
 };
 
 export const App = () => {
   const [query, setQuery] = useState('');
-  const filteredProducts = getFilteredProducts(products, query);
+  const [name, setName] = useState('');
+  const filteredProducts = getFilteredProducts(products, query, name);
 
   return (
     <div className="section">
@@ -56,6 +63,7 @@ export const App = () => {
               <a
                 data-cy="FilterAllUsers"
                 href="#/"
+                onClick={() => setName('')}
               >
                 All
               </a>
@@ -64,6 +72,9 @@ export const App = () => {
                 <a
                   data-cy="FilterUser"
                   href="#/"
+                  key={user.id}
+                  className={cn({ 'is-active': user.id === name })}
+                  onClick={() => setName(user.name)}
                 >
                   {user.name}
                 </a>
@@ -87,12 +98,14 @@ export const App = () => {
 
                 <span className="icon is-right">
                   {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                    onClick={() => setQuery('')}
-                  />
+                  {query && (
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => setQuery('')}
+                    />
+                  )}
                 </span>
               </p>
             </div>
@@ -102,6 +115,7 @@ export const App = () => {
                 href="#/"
                 data-cy="AllCategories"
                 className="button is-success mr-6 is-outlined"
+                onClick={() => setName('')}
               >
                 All
               </a>
@@ -130,9 +144,11 @@ export const App = () => {
         </div>
 
         <div className="box table-container">
-          <p data-cy="NoMatchingMessage">
-            No products matching selected criteria
-          </p>
+          {(name === undefined) && (
+            <p data-cy="NoMatchingMessage">
+              No products matching selected criteria
+            </p>
+          )}
 
           <table
             data-cy="ProductTable"
