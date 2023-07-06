@@ -95,7 +95,7 @@ export const App = () => {
                   className="input"
                   placeholder="Search"
                   onChange={event => setQuery(event.target.value)}
-                  // value="qwe"
+                  value={query}
                 />
 
                 <span className="icon is-left">
