@@ -47,8 +47,13 @@ const getFilteredProducts = (currProducts, query, name) => {
 
 export const App = () => {
   const [query, setQuery] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState(null);
   const filteredProducts = getFilteredProducts(products, query, name);
+
+  const clearAllFilters = () => {
+    setQuery('');
+    setName('');
+  };
 
   return (
     <div className="section">
@@ -63,6 +68,7 @@ export const App = () => {
               <a
                 data-cy="FilterAllUsers"
                 href="#/"
+                className={cn({ 'is-active': name === null })}
                 onClick={() => setName('')}
               >
                 All
@@ -73,7 +79,7 @@ export const App = () => {
                   data-cy="FilterUser"
                   href="#/"
                   key={user.id}
-                  className={cn({ 'is-active': user.id === name })}
+                  className={cn({ 'is-active': name === user.name })}
                   onClick={() => setName(user.name)}
                 >
                   {user.name}
@@ -136,6 +142,7 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={() => clearAllFilters()}
               >
                 Reset all filters
               </a>
@@ -144,7 +151,7 @@ export const App = () => {
         </div>
 
         <div className="box table-container">
-          {(name === undefined) && (
+          {(name !== null && name === 'John') && (
             <p data-cy="NoMatchingMessage">
               No products matching selected criteria
             </p>
